@@ -114,7 +114,7 @@ int FFT_Multiple_of_three(double *x_r, double *x_i, double *y_r, double *y_i, in
 		return 0; 
 	}
 	
-	double *u_r, *u_i , *v_r , *v_i , w_r , w_i , wr , wi ;
+	double *u_r, *u_i , *v_r , *v_i , w_r , w_i ;
 	
 	u_r = (double *) malloc(N*sizeof(double));
 	u_i = (double *) malloc(N*sizeof(double));
@@ -133,29 +133,33 @@ int FFT_Multiple_of_three(double *x_r, double *x_i, double *y_r, double *y_i, in
 	FFT_Multiple_of_three(u_r, u_i, v_r, v_i, N/3);
 	FFT_Multiple_of_three(u_r+N/3, u_i+N/3, v_r+N/3, v_i+N/3, N/3);
 	FFT_Multiple_of_three(u_r+2*N/3, u_i+2*N/3, v_r+2*N/3, v_i+2*N/3, N/3);
-	/*
+	
 	double t_r , t_i , t1_r , t1_i ; 
 	
-	t1_r = cos(-2*M_PI/N);
-	t1_i = sin(-2*M_PI/N);
-	w_r = t1_r ;
-	w_i = t1_i ;
-    */
+	t1_r = cos(-2.0*M_PI/N);
+	t1_i = sin(-2.0*M_PI/N);
+	w_r = 1 ;
+	w_i = 0 ;
     
+
 	for(int k=0;k<N/3;++k){
-		w_r = cos(-k*2*M_PI/N);
-		w_i = sin(-k*2*M_PI/N);
+		
+		printf("(%d,%d)\n",w_r,w_i);
+		
+		//w_r = cos(-k*2*M_PI/N);
+		//w_i = sin(-k*2*M_PI/N);
+	
 		y_r[k] = v_r[k] + w_r*v_r[k+N/3] - w_i*v_i[k+N/3];
 		y_i[k] = v_i[k] + w_r*v_i[k+N/3] + w_i*v_r[k+N/3];
-		/*
+		
 		t_r = w_r;
 		t_i = w_i;
 		
-		w_r = w_r * w_r - w_i * w_i ;
-		w_i = 2 * w_r * w_i;
-		*/
-		w_r = cos(-k*4*M_PI/N);
-		w_i = sin(-k*4*M_PI/N);
+		w_r = t_r * t_r - t_i * t_i ;
+		w_i = 2 * t_r * t_i;
+	
+		//w_r = cos(-k*4*M_PI/N);
+		//w_i = sin(-k*4*M_PI/N);
 		
 		y_r[k] += w_r*v_r[k+2*N/3] - w_i*v_i[k+2*N/3];
 		y_i[k] += w_r*v_i[k+2*N/3] + w_i*v_r[k+2*N/3];
@@ -172,14 +176,14 @@ int FFT_Multiple_of_three(double *x_r, double *x_i, double *y_r, double *y_i, in
 		w_r = cos(-(k+2*N/3)*2*M_PI/N);
 		w_i = sin(-(k+2*N/3)*2*M_PI/N);
 		y_r[k+2*N/3] = v_r[k] + w_r*v_r[k+N/3] - w_i*v_i[k+N/3];
-		y_i[k+2*N/3] = v_i[k] + w_r*v_i[k+N/3] + w_i*v_r[k+N/3] ;
+		y_i[k+2*N/3] = v_i[k] + w_r*v_i[k+N/3] + w_i*v_r[k+N/3];
 		w_r = cos(-(k+2*N/3)*4*M_PI/N);
 		w_i = sin(-(k+2*N/3)*4*M_PI/N);
 		y_r[k+2*N/3] += w_r*v_r[k+2*N/3] - w_i*v_i[k+2*N/3];
 		y_i[k+2*N/3] += w_r*v_i[k+2*N/3] + w_i*v_r[k+2*N/3];
-		
-		//w_r = t1_r * t_r + t1_i * t_i;
-		//w_i = t1_i * t_r + t1_r * t_r; 
+			
+		w_r = t1_r * t_r - t1_i * t_i;
+		w_i = t1_i * t_r + t1_r * t_i; 
 		
 	}
 	
