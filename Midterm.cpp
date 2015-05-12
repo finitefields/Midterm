@@ -9,6 +9,7 @@ int Print_Complex_Vector(double *x, double *y, int N);
 int FFT_Multiple_of_two(double *x_r, double *x_i, double *y_r, double *y_i, int N);
 int FFT_Multiple_of_three(double *x_r, double *x_i, double *y_r, double *y_i, int N);
 int FFT_Multiple_of_five(double *x_r, double *x_i, double *y_r, double *y_i, int N);
+int FFT_callfunction(double *x_r, double *x_i, double *y_r, double *y_i, int N , int p , int q, int r);
 
 int main(){
 	int k, n, N, p, q, r;
@@ -24,10 +25,10 @@ int main(){
  	y_i = (double *) malloc(N*sizeof(double));
 	Initial(x_r, x_i, N);	
 	t1 = clock();
-	FFT_Multiple_of_five(x_r, x_i, y_r, y_i, N);
+	FFT_callfunction(x_r , x_i , y_r , y_i , N , p ,q , r);
 	t2 = clock();
 	printf("%f secs\n", 1.0*(t2-t1)/CLOCKS_PER_SEC);
-	Print_Complex_Vector(y_r, y_i, N);
+	//Print_Complex_Vector(y_r, y_i, N);
 	
 	return 0;
 }
@@ -321,3 +322,15 @@ int FFT_Multiple_of_five(double *x_r, double *x_i, double *y_r, double *y_i, int
 	return 0;
 }
 
+int FFT_callfunction(double *x_r, double *x_i, double *y_r, double *y_i, int N , int p , int q, int r){
+	if(p == 0 && q == 0 && r == 0){
+		return 0;
+	}else if((N%5) == 0){
+		FFT_Multiple_of_five(x_r, x_i, y_r, y_i, N);
+	}else if((N%3) == 0){
+		FFT_Multiple_of_three(x_r, x_i, y_r, y_i, N);
+	}else{
+		FFT_Multiple_of_two(x_r, x_i, y_r, y_i, N);
+	}
+	return 0;	
+}
