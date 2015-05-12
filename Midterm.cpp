@@ -14,7 +14,18 @@ int main(){
 	printf("Please input p q r=");
 	scanf("%d %d %d", &p, &q, &r);
 	N = Generate_N(p, q, r);
-	printf("N=2^%d 3^%d 5^%d = %d\n",p,q,r,N);		
+	printf("N=2^%d 3^%d 5^%d = %d\n",p,q,r,N);	
+	x_r = (double *) malloc(N*sizeof(double));
+ 	x_i = (double *) malloc(N*sizeof(double));
+ 	y_r = (double *) malloc(N*sizeof(double));
+ 	y_i = (double *) malloc(N*sizeof(double));
+	Initial(x_r, x_i, N);	
+	t1 = clock();
+	
+	t2 = clock();
+	printf("%f secs\n", 1.0*(t2-t1)/CLOCKS_PER_SEC);
+	Print_Complex_Vector(y_r, y_i, N);
+	
 	return 0;
 }
 
