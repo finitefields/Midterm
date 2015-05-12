@@ -4,6 +4,7 @@
 #include <time.h>
 
 int Generate_N(int p, int q, int r);
+int Initial(double *x, double *y, int N);
 
 int main(){
 	int k, n, N, p, q, r;
@@ -12,12 +13,7 @@ int main(){
 	printf("Please input p q r=");
 	scanf("%d %d %d", &p, &q, &r);
 	N = Generate_N(p, q, r);
-	printf("N=2^%d 3^%d 5^%d = %d\n",p,q,r,N);
-	
-	
-	
-	
-	
+	printf("N=2^%d 3^%d 5^%d = %d\n",p,q,r,N);		
 	return 0;
 }
 
@@ -30,4 +26,12 @@ int Generate_N(int p, int q, int r)
 	for(int i=0;i<q;++i) N = N * 3;
 	for(int i=0;i<r;++i) N = N * 5;	
 	return N;
+}
+
+int Initial(double *x, double *y, int N)
+{
+	for(int n=0;n<N;++n){
+		x[n] = n; 
+		y[n] = 0; 
+	}
 }
