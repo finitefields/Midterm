@@ -57,7 +57,7 @@ int main(){
 		//Print_Complex_Vector(y_r, y_i, N);	
 	}
 	
-	//Print_Complex_Vector(y_r, y_i, N);
+	Print_Complex_Vector(y_r, y_i, N);
 	free(x_r);
 	free(x_i);
 	free(y_r);
@@ -175,7 +175,7 @@ int FFT_Multiple_of_three(double *x_r, double *x_i, double *y_r, double *y_i, in
 		FFT_Multiple_of_two(u_r+2*N/3, u_i+2*N/3, v_r+2*N/3, v_i+2*N/3, N/3);
 	}
 	
-	double t_r , t_i , t1_r , t1_i ; 
+	double t_r , t_i , t1_r , t1_i , p_r , p_i; 
 	
 	t1_r = cos(-2.0*M_PI/N);
 	t1_i = sin(-2.0*M_PI/N);
@@ -194,8 +194,11 @@ int FFT_Multiple_of_three(double *x_r, double *x_i, double *y_r, double *y_i, in
 		t_r = w_r;
 		t_i = w_i;
 		
-		w_r = t_r * t_r - t_i * t_i ;
-		w_i = 2 * t_r * t_i;
+		p_r = t_r * t_r - t_i * t_i ;
+		p_i = 2 * t_r * t_i;
+		
+		w_r = p_r;
+		w_i = p_i;
 	
 		//w_r = cos(-k*4*M_PI/N);
 		//w_i = sin(-k*4*M_PI/N);
@@ -203,21 +206,47 @@ int FFT_Multiple_of_three(double *x_r, double *x_i, double *y_r, double *y_i, in
 		y_r[k] += w_r*v_r[k+2*N/3] - w_i*v_i[k+2*N/3];
 		y_i[k] += w_r*v_i[k+2*N/3] + w_i*v_r[k+2*N/3];
 		
-		w_r = cos(-(k+N/3)*2*M_PI/N);
-		w_i = sin(-(k+N/3)*2*M_PI/N);
+		//w_r = cos(-(k+N/3)*2*M_PI/N) = cos( -k*2*M_PI/N + -2/3*M_PI ) = cos( -k*2*M_PI/N- 120 ) = cos(-k*2*M_PI/N)cos(-120) - sin(-k*2*M_PI/N)sin(-120)
+		//w_i = sin(-(k+N/3)*2*M_PI/N) = sin( -k*2*M_PI/N + -2/3*M_PI ) = sin( -k*2*M_PI/N- 120 ) = sin(-k*2*M_PI/N)cos(-120) + cos(-k*2*M_PI/N)sin(-120)
+		//w_r = cos(-(k+N/3)*2*M_PI/N);
+		//w_i = sin(-(k+N/3)*2*M_PI/N);
+		
+		w_r = t_r*(-1.0/2.0)-t_i*(-1.732050807568877/2.0);
+		w_i = t_i*(-1.0/2.0)+t_r*(-1.732050807568877/2.0);
+		
 		y_r[k+N/3] = v_r[k] + w_r*v_r[k+N/3] - w_i*v_i[k+N/3];
 		y_i[k+N/3] = v_i[k] + w_r*v_i[k+N/3] + w_i*v_r[k+N/3];
-		w_r = cos(-(k+N/3)*4*M_PI/N);
-		w_i = sin(-(k+N/3)*4*M_PI/N);
+		
+		//w_r = cos(-(k+N/3)*4*M_PI/N) = cos( -k*4*M_PI/N + -4/3*M_PI ) = cos( -k*4*M_PI/N- 240 ) = cos(-k*4*M_PI/N)cos(-240) - sin(-k*4*M_PI/N)sin(-240)
+		//w_i = sin(-(k+N/3)*4*M_PI/N) = sin( -k*4*M_PI/N + -4/3*M_PI ) = sin( -k*4*M_PI/N- 240 ) = sin(-k*4*M_PI/N)cos(-240) + cos(-k*4*M_PI/N)sin(-240)	
+		//w_r = cos(-(k+N/3)*4*M_PI/N);
+		//w_i = sin(-(k+N/3)*4*M_PI/N);
+		
+		w_r = p_r*(-1.0/2.0)-p_i*(1.732050807568877/2.0);
+		w_i = p_i*(-1.0/2.0)+p_r*(1.732050807568877/2.0);
+		
 		y_r[k+N/3] += w_r*v_r[k+2*N/3] - w_i*v_i[k+2*N/3];
 		y_i[k+N/3] += w_r*v_i[k+2*N/3] + w_i*v_r[k+2*N/3];
 		
-		w_r = cos(-(k+2*N/3)*2*M_PI/N);
-		w_i = sin(-(k+2*N/3)*2*M_PI/N);
+		//w_r = cos(-(k+2*N/3)*2*M_PI/N) = cos( -k*2*M_PI/N + -4/3*M_PI ) = cos( -k*2*M_PI/N- 240 ) = cos(-k*2*M_PI/N)cos(-240) - sin(-k*2*M_PI/N)sin(-240)
+		//w_i = sin(-(k+2*N/3)*2*M_PI/N) = sin( -k*2*M_PI/N + -4/3*M_PI ) = sin( -k*2*M_PI/N- 240 ) = sin(-k*2*M_PI/N)cos(-240) + cos(-k*2*M_PI/N)sin(-240)
+		//w_r = cos(-(k+2*N/3)*2*M_PI/N);
+		//w_i = sin(-(k+2*N/3)*2*M_PI/N);
+		
+		w_r = t_r*(-1.0/2.0)-t_i*(1.732050807568877/2.0);
+		w_i = t_i*(-1.0/2.0)+t_r*(1.732050807568877/2.0);
+		
 		y_r[k+2*N/3] = v_r[k] + w_r*v_r[k+N/3] - w_i*v_i[k+N/3];
 		y_i[k+2*N/3] = v_i[k] + w_r*v_i[k+N/3] + w_i*v_r[k+N/3];
-		w_r = cos(-(k+2*N/3)*4*M_PI/N);
-		w_i = sin(-(k+2*N/3)*4*M_PI/N);
+		
+		//w_r = cos(-(k+2*N/3)*4*M_PI/N) = cos( -k*4*M_PI/N + -8/3*M_PI ) = cos( -k*4*M_PI/N- 480 ) = cos(-k*4*M_PI/N)cos(-120) - sin(-k*4*M_PI/N)sin(-120)
+		//w_i = sin(-(k+2*N/3)*4*M_PI/N) = sin( -k*4*M_PI/N + -8/3*M_PI ) = sin( -k*4*M_PI/N- 480 ) = sin(-k*4*M_PI/N)cos(-120) + cos(-k*4*M_PI/N)sin(-120)	
+		//w_r = cos(-(k+2*N/3)*4*M_PI/N);
+		//w_i = sin(-(k+2*N/3)*4*M_PI/N);
+		
+		w_r = p_r*(-1.0/2.0)-p_i*(-1.732050807568877/2.0);
+		w_i = p_i*(-1.0/2.0)+p_r*(-1.732050807568877/2.0);
+		
 		y_r[k+2*N/3] += w_r*v_r[k+2*N/3] - w_i*v_i[k+2*N/3];
 		y_i[k+2*N/3] += w_r*v_i[k+2*N/3] + w_i*v_r[k+2*N/3];
 			
