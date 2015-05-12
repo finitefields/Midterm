@@ -10,11 +10,12 @@ int FFT_Multiple_of_two(double *x_r, double *x_i, double *y_r, double *y_i, int 
 int FFT_Multiple_of_three(double *x_r, double *x_i, double *y_r, double *y_i, int N);
 int FFT_Multiple_of_five(double *x_r, double *x_i, double *y_r, double *y_i, int N);
 int FFT_callfunction(double *x_r, double *x_i, double *y_r, double *y_i, int N , int p , int q, int r);
+int FFT_2(double *x_r, double *x_i, double *y_r, double *y_i, int N);
 
 int main(){
 	int k, n, N, p, q, r;
 	double *y_r, *y_i, *x_r, *x_i, w_r, w_i;
-	clock_t t1, t2;
+	clock_t t1, t2,t3 ,t4;
 	printf("Please input p q r=");
 	scanf("%d %d %d", &p, &q, &r);
 	N = Generate_N(p, q, r);
@@ -24,11 +25,44 @@ int main(){
  	y_r = (double *) malloc(N*sizeof(double));
  	y_i = (double *) malloc(N*sizeof(double));
 	Initial(x_r, x_i, N);	
-	t1 = clock();
-	FFT_callfunction(x_r , x_i , y_r , y_i , N , p ,q , r);
-	t2 = clock();
-	printf("%f secs\n", 1.0*(t2-t1)/CLOCKS_PER_SEC);
+	//FFT_callfunction(x_r , x_i , y_r , y_i , N , p ,q , r);
+	
+	if (p == 0 && q == 0 && r == 0){
+		return 0;
+	}else if((N%5) == 0){
+		t1 = clock();
+		FFT_Multiple_of_five(x_r, x_i, y_r, y_i, N);
+		t2 = clock();
+		printf("%f secs\n", 1.0*(t2-t1)/CLOCKS_PER_SEC);	
+		system("pause");
+		//Print_Complex_Vector(y_r, y_i, N);	
+	}else if((N%3) == 0){
+		t1 = clock();
+		FFT_Multiple_of_three(x_r, x_i, y_r, y_i, N);
+		t2 = clock();
+		printf("%f secs\n", 1.0*(t2-t1)/CLOCKS_PER_SEC);	
+		system("pause");
+		//Print_Complex_Vector(y_r, y_i, N);	
+	}else{
+		t1 = clock();
+		FFT_Multiple_of_two(x_r, x_i, y_r, y_i, N);
+		t2 = clock();
+		printf("%f secs\n", 1.0*(t2-t1)/CLOCKS_PER_SEC);	
+		system("pause");
+		/*t3 = clock();
+		FFT_2(x_r, x_i, y_r, y_i, N);
+		t4 = clock();
+		printf("%f secs\n", 1.0*(t4-t3)/CLOCKS_PER_SEC);
+		*/
+		//Print_Complex_Vector(y_r, y_i, N);	
+	}
+	
 	//Print_Complex_Vector(y_r, y_i, N);
+	free(x_r);
+	free(x_i);
+	free(y_r);
+	free(y_i);
+
 	
 	return 0;
 }
@@ -66,7 +100,7 @@ int FFT_Multiple_of_two(double *x_r, double *x_i, double *y_r, double *y_i, int 
 		y_i[0] = x_i[0];
 		return 0; 
 	}
-	
+	int k, n;
 	double *u_r, *u_i, *v_r, *v_i, w_r, w_i;
 		
 	u_r = (double *) malloc(N*sizeof(double));
@@ -74,7 +108,7 @@ int FFT_Multiple_of_two(double *x_r, double *x_i, double *y_r, double *y_i, int 
 	v_r = (double *) malloc(N*sizeof(double));
 	v_i = (double *) malloc(N*sizeof(double));
 	
-	for(int n=0;n<N/2;n++){
+	for(n=0;n<N/2;n++){
 		u_r[n] = x_r[2*n];
 		u_i[n] = x_i[2*n];
 		u_r[n+N/2] = x_r[2*n+1];
@@ -90,7 +124,7 @@ int FFT_Multiple_of_two(double *x_r, double *x_i, double *y_r, double *y_i, int 
 	w_r = t_r;
 	w_i = t_i;
 		
-	for(int k=0;k<N/2;++k){
+	for(k=0;k<N/2;++k){
 		y_r[k] = v_r[k] + (w_r*v_r[k+N/2] - w_i*v_i[k+N/2]);
 		y_i[k] = v_i[k] + (w_r*v_i[k+N/2] + w_i*v_r[k+N/2]);
 		y_r[k+N/2] = v_r[k] - (w_r*v_r[k+N/2] - w_i*v_i[k+N/2]);
@@ -131,10 +165,15 @@ int FFT_Multiple_of_three(double *x_r, double *x_i, double *y_r, double *y_i, in
 		u_r[n+2*N/3] = x_r[3*n+2];
 		u_i[n+2*N/3] = x_i[3*n+2];
 	}
-	
-	FFT_Multiple_of_three(u_r, u_i, v_r, v_i, N/3);
-	FFT_Multiple_of_three(u_r+N/3, u_i+N/3, v_r+N/3, v_i+N/3, N/3);
-	FFT_Multiple_of_three(u_r+2*N/3, u_i+2*N/3, v_r+2*N/3, v_i+2*N/3, N/3);
+	if((N%3) == 0){
+		FFT_Multiple_of_three(u_r, u_i, v_r, v_i, N/3);
+		FFT_Multiple_of_three(u_r+N/3, u_i+N/3, v_r+N/3, v_i+N/3, N/3);
+		FFT_Multiple_of_three(u_r+2*N/3, u_i+2*N/3, v_r+2*N/3, v_i+2*N/3, N/3);
+	}else{
+		FFT_Multiple_of_two(u_r, u_i, v_r, v_i, N/3);
+		FFT_Multiple_of_two(u_r+N/3, u_i+N/3, v_r+N/3, v_i+N/3, N/3);
+		FFT_Multiple_of_two(u_r+2*N/3, u_i+2*N/3, v_r+2*N/3, v_i+2*N/3, N/3);
+	}
 	
 	double t_r , t_i , t1_r , t1_i ; 
 	
@@ -145,8 +184,6 @@ int FFT_Multiple_of_three(double *x_r, double *x_i, double *y_r, double *y_i, in
     
 
 	for(int k=0;k<N/3;++k){
-		
-		printf("(%d,%d)\n",w_r,w_i);
 		
 		//w_r = cos(-k*2*M_PI/N);
 		//w_i = sin(-k*2*M_PI/N);
@@ -204,11 +241,13 @@ int FFT_Multiple_of_five(double *x_r, double *x_i, double *y_r, double *y_i, int
 		y_i[0] = x_i[0];
 		return 0; 
 	}
-	double *u_r, *u_i, *v_r, *v_i, w_r, w_i,wr,wi;
+	double *u_r, *u_i, *v_r, *v_i, w_r, w_i;
+	
 	u_r = (double *) malloc(N*sizeof(double));
 	u_i = (double *) malloc(N*sizeof(double));
 	v_r = (double *) malloc(N*sizeof(double));
 	v_i = (double *) malloc(N*sizeof(double));
+	
 	for(int n=0;n<N/5;n++){
 		u_r[n] = x_r[5*n];
 		u_i[n] = x_i[5*n];
@@ -221,11 +260,25 @@ int FFT_Multiple_of_five(double *x_r, double *x_i, double *y_r, double *y_i, int
 		u_r[n+4*N/5] = x_r[5*n+4];
 		u_i[n+4*N/5] = x_i[5*n+4];
 	}
-	FFT_Multiple_of_five(u_r, u_i, v_r, v_i, N/5);
-	FFT_Multiple_of_five(u_r+N/5, u_i+N/5, v_r+N/5, v_i+N/5, N/5);
-	FFT_Multiple_of_five(u_r+2*N/5, u_i+2*N/5, v_r+2*N/5, v_i+2*N/5, N/5);
-	FFT_Multiple_of_five(u_r+3*N/5, u_i+3*N/5, v_r+3*N/5, v_i+3*N/5, N/5);
-	FFT_Multiple_of_five(u_r+4*N/5, u_i+4*N/5, v_r+4*N/5, v_i+4*N/5, N/5);
+	if((N%5) == 0){
+		FFT_Multiple_of_five(u_r, u_i, v_r, v_i, N/5);
+		FFT_Multiple_of_five(u_r+N/5, u_i+N/5, v_r+N/5, v_i+N/5, N/5);
+		FFT_Multiple_of_five(u_r+2*N/5, u_i+2*N/5, v_r+2*N/5, v_i+2*N/5, N/5);
+		FFT_Multiple_of_five(u_r+3*N/5, u_i+3*N/5, v_r+3*N/5, v_i+3*N/5, N/5);
+		FFT_Multiple_of_five(u_r+4*N/5, u_i+4*N/5, v_r+4*N/5, v_i+4*N/5, N/5);
+	}else if((N%3) == 0){
+		FFT_Multiple_of_three(u_r, u_i, v_r, v_i, N/5);
+		FFT_Multiple_of_three(u_r+N/5, u_i+N/5, v_r+N/5, v_i+N/5, N/5);
+		FFT_Multiple_of_three(u_r+2*N/5, u_i+2*N/5, v_r+2*N/5, v_i+2*N/5, N/5);
+		FFT_Multiple_of_three(u_r+3*N/5, u_i+3*N/5, v_r+3*N/5, v_i+3*N/5, N/5);
+		FFT_Multiple_of_three(u_r+4*N/5, u_i+4*N/5, v_r+4*N/5, v_i+4*N/5, N/5);
+	}else{
+		FFT_Multiple_of_two(u_r, u_i, v_r, v_i, N/5);
+		FFT_Multiple_of_two(u_r+N/5, u_i+N/5, v_r+N/5, v_i+N/5, N/5);
+		FFT_Multiple_of_two(u_r+2*N/5, u_i+2*N/5, v_r+2*N/5, v_i+2*N/5, N/5);
+		FFT_Multiple_of_two(u_r+3*N/5, u_i+3*N/5, v_r+3*N/5, v_i+3*N/5, N/5);
+		FFT_Multiple_of_two(u_r+4*N/5, u_i+4*N/5, v_r+4*N/5, v_i+4*N/5, N/5);
+	}
 	
 	for(int k=0;k<N/5;++k){
 		w_r = cos(-k*2*M_PI/N);
@@ -323,14 +376,29 @@ int FFT_Multiple_of_five(double *x_r, double *x_i, double *y_r, double *y_i, int
 }
 
 int FFT_callfunction(double *x_r, double *x_i, double *y_r, double *y_i, int N , int p , int q, int r){
+	clock_t t1, t2;
 	if(p == 0 && q == 0 && r == 0){
 		return 0;
 	}else if((N%5) == 0){
+		t1 = clock();
 		FFT_Multiple_of_five(x_r, x_i, y_r, y_i, N);
+		t2 = clock();
+		printf("%f secs\n", 1.0*(t2-t1)/CLOCKS_PER_SEC);
 	}else if((N%3) == 0){
+		t1 = clock();
 		FFT_Multiple_of_three(x_r, x_i, y_r, y_i, N);
+		t2 = clock();
+		printf("%f secs\n", 1.0*(t2-t1)/CLOCKS_PER_SEC);
 	}else{
+		t1 = clock();
 		FFT_Multiple_of_two(x_r, x_i, y_r, y_i, N);
+		t2 = clock();
+		printf("%f secs\n", 1.0*(t2-t1)/CLOCKS_PER_SEC);
 	}
+	free(x_r);
+	free(x_i);
+	free(y_r);
+	free(y_i);
 	return 0;	
 }
+
