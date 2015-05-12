@@ -130,6 +130,10 @@ int FFT_Multiple_of_three(double *x_r, double *x_i, double *y_r, double *y_i, in
 		u_i[n+2*N/3] = x_i[3*n+2];
 	}
 	
+	FFT_Multiple_of_three(u_r, u_i, v_r, v_i, N/3);
+	FFT_Multiple_of_three(u_r+N/3, u_i+N/3, v_r+N/3, v_i+N/3, N/3);
+	FFT_Multiple_of_three(u_r+2*N/3, u_i+2*N/3, v_r+2*N/3, v_i+2*N/3, N/3);
+	
 	double t_r , t_i , t1_r , t1_i ; 
 	
 	t1_r = cos(-2*M_PI/N);
@@ -151,6 +155,7 @@ int FFT_Multiple_of_three(double *x_r, double *x_i, double *y_r, double *y_i, in
 		
 		//w_r = cos(-k*4*M_PI/N);
 		//w_i = sin(-k*4*M_PI/N);
+		
 		y_r[k] += w_r*v_r[k+2*N/3] - w_i*v_i[k+2*N/3];
 		y_i[k] += w_r*v_i[k+2*N/3] + w_i*v_r[k+2*N/3];
 		
